@@ -1,0 +1,91 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>SpatialSBIR</title>
+    <meta name="Multi-Object Sketch-Based Image Retrieval by Visual Feature Synthesis" content="Drawing">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="apple-touch-icon" href="img/icon.png">
+
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/ins-imgs.css">
+    <link rel="stylesheet" href="https://unpkg.com/tachyons@4.12.0/css/tachyons.min.css" />
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <meta name="theme-color" content="#ebebeb">
+</head>
+
+<body onload="init()">
+    <div class="cf ph3 ph5-ns pv5">
+        <header class="fn fl-ns w-50-ns pr4-ns">
+            <div class="button_color">
+                <button class="dtc button1 button3" data-color="black" onclick="getColor(this)">
+                    <i class="fas fa-pencil-alt"> First Object</i></button>
+                <button class="dtc button1 button2" data-color="blue" onclick="getColor(this)">
+                    <i class="fas fa-pencil-alt"> Second Object</i></button>
+                    <button class="dtc button1 button5" type="button" value="clear" id="clr" size="23" onclick="erase()">
+                      <i class="far fa-trash-alt"> Delete </i>
+                  </button>
+                  <button class="dtc button1 button6" type="button" value="Take screenshot" id="but_screenshot" onclick="screenshot()">
+                      <i class="fas fa-file-download"> Save</i>
+                  </button>
+                <label class="container">Use Unsplash
+                    <input type="checkbox"  id="unsplash_box" onclick="myFunction()">
+                    <span class="checkmark"></span>
+                </label>
+                <br>
+                Scale factor: <span class="demo" id="demo"></span>
+            </div>
+            <div class="slidecontainer">
+                <input type="range" min="0" max="100" value="30" class="slider" id="myRange">
+            </div>
+            <canvas id="can" width="1024" height="1024"></canvas>
+        </header>
+
+      <div class="fn fl-ns w-50-ns button_color">
+          <button class="dtc button1 button3" onClick="window.location.reload();">
+              <i class="far fa-images">Show results</i>
+          </button>
+      </div>
+      <p>Results</p>
+      </div>
+      <script>
+        var slider = document.getElementById("myRange");
+        var output = document.getElementById("demo");
+        output.innerHTML = slider.value / 10.0;
+
+        slider.oninput = function() {
+          output.innerHTML = this.value / 10.0;
+        }
+      </script>
+      <script src="js/main.js"></script>
+      <script type='text/javascript'>
+        function screenshot() {
+          html2canvas(document.body).then(function(canvas) {
+            var base64 = canvas.toDataURL('image/png');
+            var unsplash = !!document.getElementById("unsplash_box").checked;
+            fetch(base64).then(res => res.blob()).then(blob => {
+              var formData = new FormData();
+              var file = new File([blob], "filename.jpeg");
+              formData.append('image', file);
+              formData.append('scale', slider.value);
+              formData.append('unsplash', unsplash);
+
+              // TODO: Get this url dynamically
+              var url = 'http://localhost:3000/upload';
+              fetch(url, {method: 'POST', body: formData}).then(res => res.json()).then(res => {
+                console.log(res)
+                // TODO: Parse response and load images
+              })
+            })
+          });
+        }
+      </script>
+</body>
+</html>
