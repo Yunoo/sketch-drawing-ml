@@ -1,0 +1,12 @@
+node_modules/
+.idea/
+logs/
+*.log
+dist/
+.env
+.scannerwork/
+*.graphql
+.vscode/
+coverage
+uploads
+data
