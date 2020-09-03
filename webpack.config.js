@@ -1,7 +1,16 @@
 const { resolve } = require('path')
 const nodeExternals = require('webpack-node-externals')
+const WebpackShellPlugin = require('webpack-shell-plugin')
+const plugins = []
+
 
 const filename = process.env.NODE_ENV === 'production' ? 'main.prod.js' : 'main.dev.js'
+if (process.env.WEBPACK_WATCH === 'true')
+  plugins.push(
+    new WebpackShellPlugin({
+      onBuildEnd: [`npx nodemon --inspect dist/${filename} --watch dist`],
+    }),
+  )
 
 module.exports = {
   entry: './src/app.js',
@@ -29,4 +38,5 @@ module.exports = {
     },
     extensions: ['.js'],
   },
+  plugins,
 }
