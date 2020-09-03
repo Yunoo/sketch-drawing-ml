@@ -35,53 +35,39 @@
                   <button class="dtc button1 button6" type="button" value="Take screenshot" id="but_screenshot" onclick="screenshot()">
                       <i class="fas fa-file-download"> Save</i>
                   </button>
-                <label class="container">Use Unsplash
-                    <input type="checkbox"  id="unsplash_box" onclick="myFunction()">
-                    <span class="checkmark"></span>
-                </label>
                 <br>
-                Scale factor: <span class="demo" id="demo"></span>
-            </div>
-            <div class="slidecontainer">
-                <input type="range" min="0" max="100" value="30" class="slider" id="myRange">
             </div>
             <canvas id="can" width="1024" height="1024"></canvas>
         </header>
-
-      <div class="fn fl-ns w-50-ns button_color">
-          <button class="dtc button1 button3" onClick="window.location.reload();">
-              <i class="far fa-images">Show results</i>
-          </button>
-      </div>
-      <p>Results</p>
-      </div>
-      <script>
-        var slider = document.getElementById("myRange");
-        var output = document.getElementById("demo");
-        output.innerHTML = slider.value / 10.0;
-
-        slider.oninput = function() {
-          output.innerHTML = this.value / 10.0;
-        }
-      </script>
+      
+      <div id="imageContainer"></div>
+      
       <script src="js/main.js"></script>
       <script type='text/javascript'>
         function screenshot() {
-          html2canvas(document.body).then(function(canvas) {
-            var base64 = canvas.toDataURL('image/png');
-            var unsplash = !!document.getElementById("unsplash_box").checked;
+          html2canvas(document.body,{background: '#fff'}).then(function(canvas) {
+            var base64 = can.toDataURL('image/png');
             fetch(base64).then(res => res.blob()).then(blob => {
               var formData = new FormData();
-              var file = new File([blob], "filename.jpeg");
+              var file = new File([blob], "filename.png");
               formData.append('image', file);
-              formData.append('scale', slider.value);
-              formData.append('unsplash', unsplash);
 
               // TODO: Get this url dynamically
               var url = 'http://localhost:3000/upload';
               fetch(url, {method: 'POST', body: formData}).then(res => res.json()).then(res => {
-                console.log(res)
-                // TODO: Parse response and load images
+                var imgs = res["urls"];
+                var container = document.getElementById('imageContainer');
+                removeAllChildNodes(container);
+                var docFrag = document.createDocumentFragment();
+
+                imgs.forEach(function(url, index, originalArray) {
+                    var img = document.createElement('img');
+                    img.src = url;
+                    docFrag.appendChild(img);
+                });
+
+
+                container.appendChild(docFrag);
               })
             })
           });

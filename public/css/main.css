@@ -202,3 +202,8 @@ canvas {
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
 }
+
+#imageContainer img {
+    width: 20%;
+    height: auto;
+}
