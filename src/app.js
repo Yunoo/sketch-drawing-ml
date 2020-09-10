@@ -2,6 +2,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import dotenv from 'dotenv'
 import path from 'path'
+import cors from 'cors'
 
 import upload from './upload'
 import { watcher, jsonFileReader } from './fileWatcher'
@@ -9,11 +10,14 @@ import { watcher, jsonFileReader } from './fileWatcher'
 dotenv.config()
 
 const app = express()
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 5000
 
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use(express.static('public'))
+
+app.use(cors())
+
 app.get('/', (req, res) => {
   res.render(path.resolve('public', 'index.html'))
 })

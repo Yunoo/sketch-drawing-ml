@@ -45,8 +45,9 @@
       <script src="js/main.js"></script>
       <script type='text/javascript'>
         function screenshot() {
-          html2canvas(document.body,{background: '#fff'}).then(function(canvas) {
-            var base64 = can.toDataURL('image/png');
+          html2canvas(document.body, { background: '#fff' }).then(function(canvas) {
+              var base64 = can.toDataURL('image/png');
+              var unsplash = !!document.getElementById("unsplash_box").checked;
             fetch(base64).then(res => res.blob()).then(blob => {
               var formData = new FormData();
               var file = new File([blob], "filename.png");
